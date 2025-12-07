@@ -9,11 +9,28 @@ def get_gemini_response(prompt):
     response = chat.send_message(prompt)
     return response.text
 
-def anamoly_dectection(temperature,pressure,humidity,tire_pressure):
-    if(temperature>60 or pressure>2 or humidity>60 or tire_pressure>3):
-        return 1,{'temp':temperature,'humidity':humidity,'pressure':pressure,'tire_pressure':tire_pressure}
-    else:
-        return 0,{}
+from collections import deque
+from .detection_model import detect_from_window, FEATURE_COLS, WINDOW_SIZE
+
+_window_buffer = deque(maxlen=WINDOW_SIZE)
+
+def anomaly_detection(sensor_reading):
+    reading_for_model = {k: sensor_reading[k] for k in FEATURE_COLS}
+
+    _window_buffer.append(reading_for_model)
+
+    if len(_window_buffer) < WINDOW_SIZE:
+        return 0, {}   
+
+    is_anom, score = detect_from_window(list(_window_buffer))
+
+    if is_anom:
+        latest = reading_for_model.copy()
+        latest["score"] = score
+        return 1, latest
+
+    return 0, {}
+
 
 def report_generator(anamoly_readings):
     readings_text = ", ".join([f"{k}: {v}" for k, v in anamoly_readings.items()])
