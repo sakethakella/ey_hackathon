@@ -16,6 +16,12 @@ def get_data(vehicle_id):
         return dumps(data), 200
     return jsonify({"message": "No telemetry found"}), 404
 
+@app.route("/api/v1/vehicles/telemetry/latest",methods=['POST'])
+def post_data():
+    body = request.get_json()
+    inserted_id = mongo.db.telemetry.insert_one(body).inserted_id
+    return jsonify({"message": "Anomaly inserted", "id": str(inserted_id)}), 201
+
 @app.route('/api/v1/vehicles/<int:vehicle_id>/anomalies', methods=['GET'])
 def get_anomaly_data(vehicle_id):
     data = mongo.db.anamolies.find({"vehicle_id": vehicle_id})
