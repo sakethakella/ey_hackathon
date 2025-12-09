@@ -11,7 +11,6 @@ mongo = PyMongo(app)
 
 @app.route("/api/v1/vehicles/<int:vehicle_id>/telemetry/latest", methods=['GET'])
 def get_data(vehicle_id):
-    # Use mongo.db.<collection>
     data = mongo.db.telemetry.find_one({"vehicle_id": vehicle_id})
     if data:
         return dumps(data), 200
@@ -41,5 +40,9 @@ def workshop_advisor(workshop_id):
     cursor = mongo.db.jobs.find({"workshop_id": workshop_id})
     return dumps(list(cursor)), 200
 
+@app.route('/api/v1/workshops/jobs', methods=['GET'])
+def worshop():
+    data=list(mongo.db.jobs.find({}))
+    return data,201
 if __name__ == "__main__":
     app.run(debug=True,use_reloader=False)
