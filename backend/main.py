@@ -49,6 +49,6 @@ def workshop_advisor(workshop_id):
 @app.route('/api/v1/workshops/jobs', methods=['GET'])
 def worshop():
     data=list(mongo.db.jobs.find({}))
-    return data,201
+    return data,200
 if __name__ == "__main__":
     app.run(debug=True,use_reloader=False)
