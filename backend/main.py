@@ -20,7 +20,7 @@ def get_data(vehicle_id):
 def post_data():
     body = request.get_json()
     inserted_id = mongo.db.telemetry.insert_one(body).inserted_id
-    return jsonify({"message": "Anomaly inserted", "id": str(inserted_id)}), 201
+    return jsonify({"message": "data inserted", "id": str(inserted_id)}), 201
 
 @app.route('/api/v1/vehicles/<int:vehicle_id>/anomalies', methods=['GET'])
 def get_anomaly_data(vehicle_id):
