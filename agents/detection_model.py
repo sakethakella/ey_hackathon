@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score
+import joblib  
 
 import torch
 import torch.nn as nn
@@ -11,10 +12,11 @@ from torch.utils.data import Dataset, DataLoader
 DATA_PATH = "synthetic_vehicle_maintenance.csv"
 MODEL_DIR = "models"
 MODEL_PATH = os.path.join(MODEL_DIR, "transformer_ae_v1.pth")
+SCALER_PATH = os.path.join(MODEL_DIR, "scaler.pkl")  
 
 BATCH_SIZE = 64
-WINDOW_SIZE = 50    
-STEP = 10           
+WINDOW_SIZE = 50
+STEP = 10
 N_EPOCHS = 10
 LR = 1e-3
 
@@ -35,7 +37,7 @@ FEATURE_COLS = [
     "brake_temp",
 ]
 
-LABEL_COL = "label" 
+LABEL_COL = "label"  
 
 class TimeSeriesDataset(Dataset):
     """
@@ -71,7 +73,7 @@ class TimeSeriesDataset(Dataset):
         return len(self.sequences)
 
     def __getitem__(self, idx):
-        x = torch.tensor(self.sequences[idx], dtype=torch.float32)  # (T,F)
+        x = torch.tensor(self.sequences[idx], dtype=torch.float32)  
         y = self.labels[idx]
         return x, y
 
@@ -179,6 +181,10 @@ def main():
     df_scaled = df.copy()
     df_scaled[FEATURE_COLS] = scaler.fit_transform(df_scaled[FEATURE_COLS])
 
+    os.makedirs(MODEL_DIR, exist_ok=True)
+    joblib.dump(scaler, SCALER_PATH)
+    print(f"Saved scaler to {SCALER_PATH}")
+
     print("Building datasets...")
     train_df = df_scaled  
 
@@ -216,7 +222,7 @@ def main():
 
     anomaly_threshold = np.percentile(normal_errors, 95)
 
-    sev_low    = np.percentile(normal_errors, 95)   
+    sev_low    = np.percentile(normal_errors, 95)
     sev_medium = np.percentile(normal_errors, 99)
     sev_high   = np.percentile(normal_errors, 99.5)
 
@@ -235,7 +241,6 @@ def main():
     print("Confusion matrix:\n", confusion_matrix(labels, preds))
     print("ROC-AUC (higher=more anomalous):", roc_auc_score(labels, errors))
 
-    os.makedirs(MODEL_DIR, exist_ok=True)
     checkpoint = {
         "model_state_dict": model.state_dict(),
         "model_type": "TransformerAE",
@@ -255,7 +260,68 @@ def main():
     }
     torch.save(checkpoint, MODEL_PATH)
     print(f"\nSaved model checkpoint to {MODEL_PATH}")
+    
+_infer_model = None
+_infer_scaler = None
+_infer_threshold = None
+_infer_feature_cols = None
+_infer_window_size = None
 
+def _load_inference_artifacts(device=DEVICE):
+
+    global _infer_model, _infer_scaler, _infer_threshold, _infer_feature_cols, _infer_window_size
+
+    if _infer_model is not None:
+        return  
+        
+    _infer_scaler = joblib.load(SCALER_PATH)
+
+    ckpt = torch.load(MODEL_PATH, map_location=device)
+
+    input_dim = ckpt["input_dim"]
+    d_model   = ckpt["d_model"]
+    nhead     = ckpt["nhead"]
+    num_layers = ckpt["num_layers"]
+
+    _infer_feature_cols = ckpt["feature_cols"]
+    _infer_window_size  = ckpt["window_size"]
+    _infer_threshold    = ckpt["anomaly_threshold"]
+
+    model = TransformerAutoencoder(
+        input_dim=input_dim,
+        d_model=d_model,
+        nhead=nhead,
+        num_layers=num_layers,
+    )
+    model.load_state_dict(ckpt["model_state_dict"])
+    model.to(device)
+    model.eval()
+
+    _infer_model = model
+    print("[detect_from_window] Inference artifacts loaded.")
+
+
+def detect_from_window(window_readings, device=DEVICE):
+    _load_inference_artifacts(device=device)
+    if len(window_readings) < _infer_window_size:
+        return 0, 0.0
+    window_readings = window_readings[-_infer_window_size:]
+
+    X = np.array(
+        [[row[col] for col in _infer_feature_cols] for row in window_readings],
+        dtype=np.float32
+    )  
+    
+    X_scaled = _infer_scaler.transform(X)
+    
+    x = torch.tensor(X_scaled, dtype=torch.float32).unsqueeze(0).to(device)
+
+    with torch.no_grad():
+        recon = _infer_model(x)
+        mse = torch.mean((recon - x) ** 2, dim=(1, 2)).item()
+
+    is_anom = int(mse > _infer_threshold)
+    return is_anom, mse
 
 if __name__ == "__main__":
     main()
