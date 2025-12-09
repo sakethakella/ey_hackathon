@@ -1,16 +1,12 @@
-// ========================= BACKEND CONFIG =========================
-const API = "http://localhost:8000/api/v1"; // change host/port if needed
-const VEHICLE_ID = 12;                      // as per EY spec
-const WORKSHOP_ID = 3;                      // workshop "Hero RT Nagar"
-const USER_ID = 7;                          // demo user
-let LAST_ANOMALY_ID = 101;                  // matches dummy data from docs
+const API = "http://localhost:8000/api/v1"; 
+const VEHICLE_ID = 12;                      
+const WORKSHOP_ID = 3;                      
+const USER_ID = 7;                          
+let LAST_ANOMALY_ID = 101;                  
 
-// ========================= SPA NAVIGATION =========================
 document.addEventListener("DOMContentLoaded", () => {
-  // default page
   setActivePage("landing");
 
-  // nav click handlers
   document.querySelectorAll("[data-nav]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const target = btn.getAttribute("data-nav");
@@ -18,7 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // action buttons
   document
     .querySelectorAll("[data-action='simulate-anomaly']")
     .forEach((btn) => btn.addEventListener("click", submitAnomaly));
@@ -48,17 +43,12 @@ function setActivePage(page) {
   if (page === "workshop") loadWorkshopConsole();
 }
 
-// =================================================================
-//                         RIDER DASHBOARD
-// =================================================================
 async function loadRiderDashboard() {
   try {
-    // 1️⃣ GET /vehicles/{id}/telemetry/latest
     const telemetry = await fetchJSON(
       `${API}/vehicles/${VEHICLE_ID}/telemetry/latest`
     );
 
-    // 2️⃣ GET /vehicles/{id}/anomalies
     const anomalies = await fetchJSON(
       `${API}/vehicles/${VEHICLE_ID}/anomalies`
     );
@@ -71,19 +61,6 @@ async function loadRiderDashboard() {
 }
 
 function updateRiderSnapshot(t) {
-  // t = telemetry JSON from EY doc:
-  // {
-  //   "vehicle_id": 12,
-  //   "vehicle_name": "...",
-  //   "timestamp": "2025-12-07T10:20:00Z",
-  //   "speed": 43,
-  //   "rpm": 3200,
-  //   "engine_temp": 103.5,
-  //   "battery_voltage": 12.6,
-  //   "tyre_fl": 30.5, ...
-  //   "health_index": 0.62,
-  //   "has_open_anomaly": true
-  // }
 
   const soc = Math.round((t.health_index ?? 0.8) * 100);
   const estRange = Math.round(soc * 1.2); // simple demo formula
@@ -104,18 +81,6 @@ function updateRiderSnapshot(t) {
 }
 
 function updateRiderProtections(anomalies) {
-  // anomalies list from EY doc:
-  // [
-  //   {
-  //     "id": 101,
-  //     "vehicle_id": 12,
-  //     "type": "engine_overheat",
-  //     "severity": "high",
-  //     "first_ts": "...",
-  //     "status": "open",
-  //     "message": "Engine temperature above safe limit for 12 minutes."
-  //   }
-  // ]
 
   const listEl = document.getElementById("rider-protections-list");
   listEl.innerHTML = "";
@@ -157,13 +122,8 @@ function formatAnomaly(type) {
   if (!type) return "Anomaly";
   return type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
-
-// =================================================================
-//                         WORKSHOP CONSOLE
-// =================================================================
 async function loadWorkshopConsole() {
   try {
-    // 5️⃣ GET /workshops/{id}/jobs
     const jobs = await fetchJSON(`${API}/workshops/${WORKSHOP_ID}/jobs`);
     updateWorkshopJobs(jobs);
   } catch (err) {
@@ -172,21 +132,6 @@ async function loadWorkshopConsole() {
 }
 
 function updateWorkshopJobs(jobs) {
-  // jobs from EY doc:
-  // [
-  //   {
-  //     "id": 88,
-  //     "vehicle_id": 12,
-  //     "vehicle_reg": "KA-01-AB-1234",
-  //     "customer_name": "Suresh",
-  //     "anomaly_type": "engine_overheat",
-  //     "severity": "high",
-  //     "status": "booked",
-  //     "slot_start": "...",
-  //     "slot_end": "..."
-  //   }
-  // ]
-
   const listEl = document.getElementById("workshop-jobs-list");
   listEl.innerHTML = "";
 
@@ -224,13 +169,8 @@ function updateWorkshopJobs(jobs) {
     listEl.appendChild(row);
   });
 }
-
-// =================================================================
-//                       ACTION: POST /anomalies
-// =================================================================
 async function submitAnomaly() {
   try {
-    // 3️⃣ POST /api/v1/anomalies
     const body = {
       vehicle_id: VEHICLE_ID,
       type: "engine_overheat",
@@ -242,20 +182,14 @@ async function submitAnomaly() {
     LAST_ANOMALY_ID = response.id || LAST_ANOMALY_ID;
 
     alert("Anomaly created with ID " + response.id);
-    // refresh rider view to see it
     loadRiderDashboard();
   } catch (err) {
     console.error("Error submitting anomaly:", err);
     alert("Failed to submit anomaly. Check console.");
   }
 }
-
-// =================================================================
-//                       ACTION: POST /jobs
-// =================================================================
 async function bookJob() {
   try {
-    // 4️⃣ POST /api/v1/jobs
     const body = {
       user_id: USER_ID,
       vehicle_id: VEHICLE_ID,
@@ -270,17 +204,12 @@ async function bookJob() {
 
     const response = await fetchJSON(`${API}/jobs`, "POST", body);
     alert(`Job booked! Job ID = ${response.id}`);
-    // refresh workshop console to show job
     loadWorkshopConsole();
   } catch (err) {
     console.error("Error booking job:", err);
     alert("Failed to book job. Check console.");
   }
 }
-
-// =================================================================
-//               OPTIONAL: POST /webhooks/whatsapp/inbound
-// =================================================================
 async function simulateWhatsAppYes() {
   try {
     const body = {
@@ -308,10 +237,6 @@ async function simulateWhatsAppYes() {
     alert("Failed to simulate WhatsApp webhook. Check console.");
   }
 }
-
-// =================================================================
-//                          HELPERS
-// =================================================================
 async function fetchJSON(url, method = "GET", body = null) {
   const res = await fetch(url, {
     method,
