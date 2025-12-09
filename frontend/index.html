@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>MotoVerse Prototype</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="app-root">
+    <div class="bg-orbit"></div>
+    <div class="bg-grid"></div>
+
+    <!-- HEADER / NAV -->
+    <header>
+      <div class="nav">
+        <div class="nav-left">
+          <div class="brand-icon">
+            <div class="brand-inner">MV</div>
+          </div>
+          <div class="brand-text">
+            <div class="brand-title">MOTOVERSE</div>
+            <div class="brand-sub">EV Fault Intelligence Console</div>
+          </div>
+        </div>
+
+        <div class="nav-links">
+          <div class="pill">
+            <span class="pill-dot"></span>
+            Live demo · synthetic data
+          </div>
+          <button class="nav-link" data-nav="landing">
+            Overview
+          </button>
+          <button class="nav-link" data-nav="rider">
+            Rider view
+            <span class="badge">BETA</span>
+          </button>
+          <button class="nav-link" data-nav="workshop">
+            Workshop console
+          </button>
+          <button class="nav-link primary" data-nav="rider">
+            Open Prototype →
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- ============ LANDING PAGE ============ -->
+      <section id="page-landing" class="page-section active">
+        <div class="page">
+          <div class="landing-grid">
+            <!-- Left: Hero text -->
+            <div>
+              <p class="badge-soft">AI + Telematics · EY Techathon prototype</p>
+
+              <h1 class="hero-title" style="margin-top: 10px;">
+                Close the loop from
+                <span class="hero-gradient">fault detection to resolution</span>
+                for every EV you deploy.
+              </h1>
+
+              <p class="hero-subtitle">
+                MotoVerse ingests live telemetry from connected two-wheelers,
+                runs anomaly detection, and routes actionable tickets to riders,
+                OEMs, and workshops — before breakdowns hit the road.
+              </p>
+
+              <div class="hero-metrics">
+                <div class="metric-pill">
+                  <strong>92%</strong> anomalies surfaced before breakdown
+                </div>
+                <div class="metric-pill">
+                  <strong>120K+</strong> synthetic trips analysed
+                </div>
+                <div class="metric-pill">
+                  <strong>Fleet-wide</strong> policy simulation sandbox
+                </div>
+              </div>
+
+              <div class="hero-actions">
+                <button class="btn btn-primary" data-nav="rider">
+                  Try rider dashboard →
+                </button>
+                <button class="btn btn-ghost" data-nav="workshop">
+                  Switch to workshop console
+                </button>
+              </div>
+
+              <p class="hero-footnote">
+                Powered by <span>multi-signal anomaly detection</span>, policy
+                rules, and <span>explainable alerts</span> for every stakeholder.
+              </p>
+            </div>
+
+            <!-- Right: Glass cards -->
+            <div class="landing-right">
+              <div class="glass-card">
+                <div class="glass-card-header">
+                  <div>
+                    <p class="glass-title">Live health snapshot</p>
+                    <p class="glass-sub">Rider’s primary vehicle · MV-PUNE-X1</p>
+                  </div>
+                  <span class="status-dot status-ok"></span>
+                </div>
+
+                <div class="metric-row">
+                  <span>Battery SOH</span>
+                  <strong>92.4%</strong>
+                </div>
+                <div class="metric-row">
+                  <span>Range at current load</span>
+                  <strong>118 km</strong>
+                </div>
+                <div class="metric-row">
+                  <span>Charging cycles</span>
+                  <strong>641 cycles</strong>
+                </div>
+
+                <div class="chip-row">
+                  <div class="chip">
+                    <span class="dot"></span>
+                    Cell temp 31.4°C
+                  </div>
+                  <div class="chip">
+                    <span class="dot"></span>
+                    Motor efficiency 91%
+                  </div>
+                </div>
+
+                <button class="card-link" data-nav="rider">
+                  Open rider view
+                </button>
+              </div>
+
+              <div class="glass-card">
+                <div class="glass-card-header">
+                  <div>
+                    <p class="glass-title">Open anomalies</p>
+                    <p class="glass-sub">Fleet policy engine · synthetic data</p>
+                  </div>
+                  <span class="status-dot status-warn"></span>
+                </div>
+
+                <div class="list">
+                  <div class="list-item">
+                    <div class="list-main">
+                      <span class="list-title">Rare voltage imbalance</span>
+                      <span class="list-meta">Triggered in 3 vehicles · 12h ago</span>
+                    </div>
+                    <span class="pill-severity">High</span>
+                  </div>
+                  <div class="list-item">
+                    <div class="list-main">
+                      <span class="list-title">Over-temperature near hill-climb</span>
+                      <span class="list-meta">8 riders · auto throttling applied</span>
+                    </div>
+                    <span class="pill-severity pill-severity-medium">Medium</span>
+                  </div>
+                </div>
+
+                <button class="card-link" data-nav="workshop">
+                  View workshop tickets
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ RIDER DASHBOARD ============ -->
+      <section id="page-rider" class="page-section">
+        <div class="page">
+          <div class="page-heading">
+            <div>
+              <div class="badge-soft">Rider dashboard · Demo VIN MV-PUNE-X1</div>
+              <h2 class="page-title" style="margin-top: 8px;">
+                Your bike’s health, at a glance.
+              </h2>
+              <p class="page-subtitle">
+                Synthetic telemetry rendered in near real-time — speed, SoC, thermal envelope,
+                and anomaly context for the last active trip.
+              </p>
+            </div>
+            <div class="hero-actions">
+              <button class="btn btn-primary" data-action="simulate-anomaly">
+                Simulate anomaly (POST /anomalies)
+              </button>
+              <button class="btn btn-ghost" data-action="book-job">
+                Book service (POST /jobs)
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-3">
+            <!-- Snapshot card with IDs -->
+            <div class="card" id="rider-snapshot-card">
+              <div class="card-header">
+                <div class="card-title">Vehicle snapshot</div>
+                <div class="card-extra" id="rider-last-sync">Last sync · --</div>
+              </div>
+
+              <div class="metric-row">
+                <span>State of charge</span>
+                <strong id="rider-soc">--%</strong>
+              </div>
+              <div class="metric-row">
+                <span>Estimated range</span>
+                <strong id="rider-range">-- km</strong>
+              </div>
+              <div class="metric-row">
+                <span>Avg. efficiency this trip</span>
+                <strong id="rider-eff">-- Wh/km</strong>
+              </div>
+
+              <div class="chip-row">
+                <div class="chip">
+                  <span class="dot"></span>
+                  <span id="rider-mode">Loading...</span>
+                </div>
+                <div class="chip">
+                  <span class="dot"></span>
+                  <span id="rider-tyre-status">Loading...</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">Thermal envelope</div>
+                <div class="card-extra">Motor &amp; pack temperature</div>
+              </div>
+              <p class="page-subtitle">
+                AI watches for unusual spikes during climbs, traffic idling, and fast-charge
+                sessions and then derates power only when needed.
+              </p>
+              <div class="chip-row">
+                <div class="chip">
+                  <span class="dot"></span>
+                  Motor 54°C · Safe
+                </div>
+                <div class="chip">
+                  <span class="dot"></span>
+                  Pack 38°C · Stable
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">Active protections</div>
+                <div class="card-extra">Policy engine · rider view</div>
+              </div>
+
+              <ul class="list" id="rider-protections-list">
+                <!-- Filled by JS from /vehicles/{id}/anomalies -->
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ WORKSHOP CONSOLE ============ -->
+      <section id="page-workshop" class="page-section">
+        <div class="page">
+          <div class="page-heading">
+            <div>
+              <div class="badge-soft">Workshop console · Synthetic lab fleet</div>
+              <h2 class="page-title" style="margin-top: 8px;">
+                Turn anomalies into actionable tickets.
+              </h2>
+              <p class="page-subtitle">
+                A consolidated view of bikes that need attention, with fault clusters, repair
+                suggestions, and status synced back to riders &amp; OEM.
+              </p>
+            </div>
+            <div class="hero-actions">
+              <button class="btn btn-primary" data-action="refresh-jobs">
+                Refresh jobs (GET /workshops/3/jobs)
+              </button>
+              <button class="btn btn-ghost" data-action="simulate-whatsapp">
+                Simulate WhatsApp "Yes"
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-2">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">Incoming anomaly tickets</div>
+                <div class="card-extra">Filtered by city · PUNE</div>
+              </div>
+
+              <div class="list" id="workshop-jobs-list">
+                <!-- Filled by JS from /workshops/{id}/jobs -->
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">Policy sandbox</div>
+                <div class="card-extra">What-if · simulation</div>
+              </div>
+
+              <p class="page-subtitle">
+                Tweak thresholds and mitigation actions, then replay historical trips to see
+                how many incidents you would have prevented — before you ship policies
+                to your live fleet.
+              </p>
+
+              <div class="chip-row">
+                <div class="chip">
+                  <span class="dot"></span>
+                  Voltage imbalance threshold · 3.5% → 2.8%
+                </div>
+                <div class="chip">
+                  <span class="dot"></span>
+                  Predicted prevented cases: 19 / 120
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      © 2025 MotoVerse Inc. Synthetic prototype for EY Techathon demo.
+    </footer>
+  </div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
