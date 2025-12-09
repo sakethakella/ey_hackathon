@@ -30,7 +30,38 @@ def anomaly_detection(sensor_reading):
         return 1, latest
 
     return 0, {}
+    
+    if severity == "low":
+        urgency = "monitor"
+        notify_app = True
+        notify_whatsapp = False
+        trigger_voice_call = False
+        recommended_sla_hours = 72   # service within 3 days 
+    elif severity == "medium":
+        urgency = "schedule_soon"
+        notify_app = True
+        notify_whatsapp = True
+        trigger_voice_call = False
+        recommended_sla_hours = 24   # service within 24 hours
+    else:  
+        urgency = "immediate_service"
+        notify_app = True
+        notify_whatsapp = True
+        trigger_voice_call = True
+        recommended_sla_hours = 4    # service ASAP (e.g., 4 hours)
 
+    latest = reading_for_model.copy()
+    latest.update({
+        "score": score,
+        "severity": severity,
+        "urgency": urgency,
+        "notify_app": notify_app,
+        "notify_whatsapp": notify_whatsapp,
+        "trigger_voice_call": trigger_voice_call,
+        "recommended_sla_hours": recommended_sla_hours,
+    })
+
+    return 1, latest
 
 def report_generator(anamoly_readings):
     readings_text = ", ".join([f"{k}: {v}" for k, v in anamoly_readings.items()])
