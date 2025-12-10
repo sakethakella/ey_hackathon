@@ -1,1 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integrated Vehicle Intelligence Platform - Rider App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .hero-blue-bg { background-color: #0070e6; } 
+        .hero-red-bg { background-color: #E4002B; } 
+        .hero-blue-text { color: #0070e6; }
+        .hero-red-text { color: #E4002B; }
+        .card { @apply bg-white p-6 rounded-xl shadow-lg border border-gray-100; }
+        .input-style { @apply w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
 
+    <div id="app" class="flex flex-col min-h-screen">
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, addDoc, collection, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'pulse-insight-default-app';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let app, db, auth;
+        let userId = null;
+        let isAuthReady = false;
+
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+        } catch (e) {
+            console.error("Firebase initialization failed:", e);
+        }
+
+        let state = {
+            vehicleId: 12,
+            latestTelemetry: null,
+            partCertificates: [],
+            anomalyNotification: null,
+        };
+        const mockTelemetry = () => ({
+            vehicle_id: state.vehicleId,
+            timestamp: new Date().toISOString(),
+            speed: Math.floor(Math.random() * 80),
+            rpm: Math.floor(Math.random() * (7000 - 2000) + 2000),
+            engine_temp: (90 + Math.random() * 10).toFixed(1),
+            battery_voltage: (12.5 + Math.random() * 0.5).toFixed(1),
+            tyre_fl: (30 + Math.random() * 2).toFixed(1),
+            tyre_fr: (30 + Math.random() * 2).toFixed(1),
+        });
+
+        const mockAnomalyNotification = () => {
+            if (state.anomalyNotification) return;
+
+            const severity = Math.random() > 0.7 ? 'high' : 'medium';
+            const type = severity === 'high' ? 'engine_overheat' : 'low_tire_pressure';
+            
+            state.anomalyNotification = {
+                id: Math.floor(Math.random() * 1000),
+                type: type,
+                severity: severity,
+                message: type === 'engine_overheat' ? 'Critical Engine Overheat Detected. Service Required.' : 'Low Tire Pressure Detected. Check soon.',
+                first_ts: new Date().toISOString()
+            };
+            renderNotification();
+        };
+
+        const api = {
+            getLatestTelemetry: async () => mockTelemetry(),
+            getVehicleStatus: async () => ({
+                vehicle_id: state.vehicleId,
+                last_anomaly: state.anomalyNotification || { id: 0, type: 'none', severity: 'none', first_ts: '' }
+            }),
+
+            getPartCertificates: async () => ([
+                { id: 501, part_name: "Thermostat Valve", verified_at: "2025-12-07", workshop_name: "Hero RT Nagar", verified: true },
+                { id: 502, part_name: "Brake Pads (Front)", verified_at: "2025-10-15", workshop_name: "Mahindra Service Ctr", verified: true },
+                { id: 503, part_name: "Chain Sprocket", verified_at: "2024-05-20", workshop_name: "OEM Plant", verified: false }
+            ]),
+
+            createJob: async (data) => {
+                console.log(`[JOB CREATED] New service job created from ${data.source}. Job will be saved to Firestore.`);
+                await saveJobToFirestore(data); 
+                
+                const jobConfirmation = { id: 91, vehicle_reg: 'KA-01-AB-1234' };
+                document.getElementById('notification-container').innerHTML = `
+                    <div class="card p-4 flex items-center justify-between bg-green-500 text-white transition-all duration-300">
+                        <div class="flex items-center space-x-3">
+                            <div class="lucide w-6 h-6" data-lucide="check-circle"></div>
+                            <div>
+                                <p class="font-bold">SERVICE BOOKED</p>
+                                <p class="text-sm">Job #${jobConfirmation.id} for ${jobConfirmation.vehicle_reg} has been created.</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                lucide.createIcons();
+
+                state.anomalyNotification = null; 
+                setTimeout(() => {
+                    document.getElementById('notification-container').innerHTML = '';
+                    render(); 
+                }, 8000); 
+
+                return { success: true, jobId: 91 };
+            },
+        };
+
+        const getJobsCollectionRef = () => {
+            if (!userId || !db) return null;
+            return collection(db, 'artifacts', appId, 'public', 'data', 'jobs');
+        };
+
+        
+        const saveJobToFirestore = async (jobData) => {
+            if (!isAuthReady || !userId || !db) {
+                console.warn("Firestore not ready or user not authenticated. Job not saved.");
+                return;
+            }
+            const jobsRef = getJobsCollectionRef();
+            if (!jobsRef) return;
+
+            try {
+                
+                const payload = {
+                    vehicle_id: jobData.vehicle_id,
+                    workshop_id: jobData.workshop_id,
+                    status: jobData.status, 
+                    slot_start: jobData.slot_start,
+                    user_id: userId, 
+                    anomaly_id: jobData.anomaly_id,
+                    source: jobData.source,
+                    createdAt: new Date().toISOString()
+                };
+
+                const docRef = await addDoc(jobsRef, payload);
+                console.log("Service Job saved to Firestore with ID: ", docRef.id);
+            } catch (e) {
+                console.error("Error adding document: ", e);
+            }
+        };
+
+        
+
+        const renderHeader = () => {
+            const header = document.createElement('header');
+            header.className = 'sticky top-0 z-20 bg-white shadow-md px-6 py-3 flex justify-between items-center';
+            header.innerHTML = `
+                <div class="flex items-center space-x-4">
+                    <div class="lucide w-6 h-6 hero-blue-text" data-lucide="zap"></div>
+                    <span class="text-xl font-bold text-gray-800">Vehicle Insights Rider App</span>
+                </div>
+                
+                <div class="flex items-center space-x-3">
+                    <span class="text-xs text-gray-500 mr-4">Rider ID: ${userId || 'N/A'}</span>
+                    <div class="lucide w-5 h-5 text-gray-500" data-lucide="user"></div>
+                </div>
+            `;
+            return header;
+        };
+
+        const renderNotification = () => {
+            const container = document.getElementById('notification-container');
+            if (!container) return;
+
+            if (!state.anomalyNotification) {
+                container.innerHTML = '';
+                return;
+            }
+
+            const { severity, message, id } = state.anomalyNotification;
+            const isHigh = severity === 'high';
+            const colorClass = isHigh ? 'bg-red-500' : 'bg-yellow-500';
+            const icon = isHigh ? 'alert-triangle' : 'bell';
+
+            container.innerHTML = `
+                <div class="card p-4 flex items-center justify-between ${colorClass} text-white transition-all duration-300">
+                    <div class="flex items-center space-x-3">
+                        <div class="lucide w-6 h-6" data-lucide="${icon}"></div>
+                        <div>
+                            <p class="font-bold">${isHigh ? 'CRITICAL ANOMALY ALERT' : 'SERVICE RECOMMENDATION'}</p>
+                            <p class="text-sm">${message}</p>
+                        </div>
+                    </div>
+                    <button onclick="window.mockConfirmService(${id})" class="bg-white text-gray-800 font-semibold py-1 px-4 rounded-full hover:bg-gray-100 transition-colors shadow-md">
+                        Book Service Now
+                    </button>
+                </div>
+            `;
+            lucide.createIcons();
+        };
+
+        
+        const renderRiderDashboard = async () => {
+            const telemetry = state.latestTelemetry;
+            const certificates = state.partCertificates;
+            
+            const mainContent = `
+                <div class="p-8 space-y-8 max-w-7xl mx-auto">
+                    <!-- Notification Banner -->
+                    <div id="notification-container"></div>
+                    
+                    <!-- Telemetry Snapshot (Now the main focus) -->
+                    <div class="grid grid-cols-1 gap-6">
+                        <div class="card">
+                            <h3 class="text-xl font-bold mb-6 text-gray-800 hero-blue-text flex items-center space-x-2">
+                                <div class="lucide w-6 h-6" data-lucide="activity"></div>
+                                <span>Vehicle Live Telemetry (Updated: ${new Date(telemetry.timestamp).toLocaleTimeString()})</span>
+                            </h3>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+                                ${[
+                                    { label: 'Speed', value: `${telemetry.speed} km/h`, icon: 'gauge', color: 'bg-blue-50' },
+                                    { label: 'RPM', value: `${telemetry.rpm} RPM`, icon: 'rotate-cw', color: 'bg-blue-50' },
+                                    { label: 'Engine Temp', value: `${telemetry.engine_temp}°C`, icon: 'thermometer', color: (parseFloat(telemetry.engine_temp) > 95) ? 'bg-red-50' : 'bg-green-50' },
+                                    { label: 'Battery', value: `${telemetry.battery_voltage} V`, icon: 'battery-charging', color: (parseFloat(telemetry.battery_voltage) < 12.0) ? 'bg-red-50' : 'bg-green-50' },
+                                    { label: 'Tire FL', value: `${telemetry.tyre_fl} PSI`, icon: 'disc-3', color: (parseFloat(telemetry.tyre_fl) < 30) ? 'bg-yellow-50' : 'bg-gray-50' },
+                                    { label: 'Tire FR', value: `${telemetry.tyre_fr} PSI`, icon: 'disc-3', color: (parseFloat(telemetry.tyre_fr) < 30) ? 'bg-yellow-50' : 'bg-gray-50' },
+                                    { label: 'Brake Temp (Mock)', value: `75.0°C`, icon: 'disc', color: 'bg-gray-50' },
+                                    { label: 'Date', value: new Date(telemetry.timestamp).toLocaleDateString(), icon: 'clock', color: 'bg-gray-50' },
+                                ].map(item => `
+                                    <div class="p-4 ${item.color} rounded-lg shadow-inner">
+                                        <div class="lucide w-6 h-6 mx-auto mb-1 hero-blue-text" data-lucide="${item.icon}"></div>
+                                        <p class="text-xs text-gray-500">${item.label}</p>
+                                        <p class="text-xl font-bold text-gray-800">${item.value}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Part Verification Certificate Section -->
+                    <div class="card">
+                        <h2 class="text-xl font-semibold hero-blue-text mb-4 flex items-center space-x-2">
+                            <div class="lucide w-6 h-6" data-lucide="shield-check"></div>
+                            <span>Part Verified Certificates (Authenticity)</span>
+                        </h2>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Part Name</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Verified At</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Workshop</th>
+                                        <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    ${certificates.map(cert => `
+                                        <tr>
+                                            <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${cert.part_name}</td>
+                                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600">${cert.verified_at}</td>
+                                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600">${cert.workshop_name}</td>
+                                            <td class="px-4 py-4 whitespace-nowrap text-center">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${cert.verified ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                                    ${cert.verified ? 'Verified ✅' : 'Unverified ⚠️'}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('content').innerHTML = mainContent;
+            renderNotification();
+            lucide.createIcons();
+        };
+
+        const render = async () => {
+            const appDiv = document.getElementById('app');
+            if (!isAuthReady) {
+                appDiv.innerHTML = '<div class="p-12 text-center text-gray-500">Initializing Authentication...</div>';
+                return;
+            }
+            
+            try {
+                state.latestTelemetry = await api.getLatestTelemetry();
+                
+                state.partCertificates = await api.getPartCertificates();
+            } catch (e) {
+                console.error("Error fetching data:", e);
+                appDiv.innerHTML = `<div class="p-12 text-center text-red-600">Error loading data: ${e.message}. Check console for details.</div>`;
+                return;
+            }
+
+            if (!document.getElementById('header')) {
+                appDiv.innerHTML = `<div id="header"></div><main id="content" class="flex-1"></main>`;
+            }
+
+            document.getElementById('header').innerHTML = '';
+            document.getElementById('header').appendChild(renderHeader());
+
+            renderRiderDashboard();
+        };
+
+        
+
+        window.mockConfirmService = (anomalyId) => {
+            console.log(`[USER ACTION] Rider confirmed service for anomaly ID ${anomalyId}.`);
+            
+            
+            const slotStart = new Date(Date.now() + 7200000).toISOString().replace(/\.\d{3}Z$/, 'Z');
+            
+            api.createJob({
+                vehicle_id: state.vehicleId,
+                workshop_id: 3, 
+                status: 'booked',
+                slot_start: slotStart, 
+                anomaly_id: anomalyId,
+                source: "app_notification_click"
+            });
+        };
+        
+        
+
+        const initVehicleApp = async () => {
+            if (!auth) return;
+
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    userId = user.uid;
+                } else {
+                    try {
+                        const anonUser = await signInAnonymously(auth);
+                        userId = anonUser.user.uid;
+                    } catch (e) {
+                        console.error("Anonymous sign-in failed:", e);
+                        return;
+                    }
+                }
+                isAuthReady = true;
+                console.log("Authentication complete. User ID:", userId);
+                
+                
+                setInterval(render, 5000); 
+                
+                setTimeout(mockAnomalyNotification, 10000); 
+                
+                render();
+            });
+            
+            try {
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    console.log("No custom token provided. Awaiting auth state change for anonymous sign-in.");
+                }
+            } catch (error) {
+                console.error("Auth sign-in failed:", error);
+            }
+        };
+
+        initVehicleApp();
+
+    </script>
+</body>
+</html>
