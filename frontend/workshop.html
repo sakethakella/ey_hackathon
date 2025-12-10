@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workshop Console | Service Management</title>
+    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap">
+    <style>
+        :root {
+            --bg: #111827; 
+            --bg-soft: #1f2937; 
+            --bg-card: #2c3643; 
+            --accent: #3b82f6; 
+            --accent-soft: rgba(59, 130, 246, 0.1);
+            --accent-2: #10b981; 
+            --text: #f3f4f6; 
+            --muted: #9ca3af; 
+            --border: #4b5563; 
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --radius-lg: 12px;
+            --radius-full: 999px;
+            --shadow-subtle: 0 4px 10px rgba(0, 0, 0, 0.4);
+            --transition-fast: 0.25s ease-out;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .app-root {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .bg-grid {
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.15;
+            z-index: -1;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            background-color: var(--bg-soft);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius-full);
+            background-color: var(--accent-2); 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 0.05em;
+        }
+
+        .brand-sub {
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.9rem;
+        }
+
+        .nav-link {
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            background: transparent;
+            color: var(--muted);
+            font: inherit;
+            transition: background var(--transition-fast), color var(--transition-fast);
+            text-decoration: none;
+        }
+
+        .nav-link:hover {
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+
+        .nav-link.primary {
+            background: var(--accent);
+            color: var(--bg);
+            font-weight: 600;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .nav-link.primary:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+
+        main {
+            flex: 1;
+        }
+
+        .page {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 20px 60px;
+        }
+
+        .page-heading {
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .page-subtitle {
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+
+
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-subtle);
+            transition: transform var(--transition-fast);
+        }
+
+        .card:hover {
+            
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .card-extra {
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .kpi-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 120px;
+        }
+        
+        
+        .status-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-booked {
+            background-color: var(--accent-soft);
+            color: var(--accent);
+        }
+
+        .status-in-progress {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .status-waiting {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+        
+        .status-ready {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .appointment-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .appointment-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            cursor: pointer;
+            transition: background-color var(--transition-fast);
+        }
+
+        .appointment-item:hover {
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .appointment-item:last-child {
+            border-bottom: none;
+        }
+
+        .app-details {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .app-name {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        .app-time {
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+
+        .app-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-button {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-soft);
+            color: var(--text);
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: background var(--transition-fast);
+        }
+
+        .action-button:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--bg);
+        }
+
+        
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 16px 20px;
+            font-size: 0.8rem;
+            color: var(--muted);
+            text-align: center;
+            background-color: var(--bg-soft);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-root">
+        <div class="bg-grid"></div>
+
+        <header>
+            <div class="nav">
+                <div class="nav-left">
+                    <div class="brand-icon">🔧</div>
+                    <div class="brand-text">
+                        <span class="brand-title">SERVICE MASTER</span>
+                        <span class="brand-sub">Workshop Console</span>
+                    </div>
+                </div>
+                <div class="nav-links">
+                    <a href="#" class="nav-link primary">Today</a>
+                    <a href="#" class="nav-link">Work Orders</a>
+                    <a href="#" class="nav-link">Inventory</a>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <section class="page">
+                <div class="page-heading">
+                    <div>
+                        <h1 class="page-title">Today's Service Schedule</h1>
+                        <p class="page-subtitle">Wednesday, December 10, 2025 | 12 total appointments</p>
+                    </div>
+                    <button id="refreshButton" class="nav-link primary" style="background: var(--accent-2);">
+                        Refresh Data
+                    </button>
+                </div>
+
+                
+                <div class="dashboard-grid">
+                    <div class="card kpi-card">
+                        <span class="kpi-label">Jobs In Progress</span>
+                        <span class="kpi-value" id="kpi-in-progress">4</span>
+                        <div class="kpi-footer">
+                            <span style="color: var(--warning); font-weight: 600;">↑ 1 Job</span>
+                            Since Morning Start
+                        </div>
+                    </div>
+
+                    <div class="card kpi-card">
+                        <span class="kpi-label">Ready for Pickup</span>
+                        <span class="kpi-value" id="kpi-ready" style="color: var(--success);">2</span>
+                        <div class="kpi-footer">
+                            <span class="kpi-change-positive">2 Confirmed</span>
+                            Awaiting Customer
+                        </div>
+                    </div>
+
+                    <div class="card kpi-card">
+                        <span class="kpi-label">Parts Inventory Low</span>
+                        <span class="kpi-value" id="kpi-low-inventory" style="color: var(--danger);">5</span>
+                        <div class="kpi-footer">
+                            <span class="kpi-change-negative">Critical items</span>
+                            Requires Immediate Order
+                        </div>
+                    </div>
+
+                    <div class="card kpi-card">
+                        <span class="kpi-label">Technicians Available</span>
+                        <span class="kpi-value" id="kpi-available">3 / 8</span>
+                        <div class="kpi-footer">
+                            <span style="color: var(--muted); font-weight: 600;">8 Total Staff</span>
+                            Rest are assigned or on break
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div class="card" style="grid-column: 1 / -1;">
+                    <h2 class="card-title">Appointments & Work Orders</h2>
+                    <ul class="appointment-list" id="appointmentList">
+                        
+                    </ul>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            &copy; 2025 Service Master Systems. Data refreshed every 5 minutes.
+        </footer>
+    </div>
+
+    <script>
+        
+        const appointments = [
+            { id: 101, time: "9:00 AM", name: "Riddhiman", vehicle: "Hero Splendor", service: "Brake Flush & Pad Check", status: "READY" },
+            { id: 102, time: "10:30 AM", name: "Suresh", vehicle: "Hero Xtreme", service: "Standard Oil Change", status: "IN_PROGRESS" },
+            { id: 103, time: "11:00 AM", name: "Aditya", vehicle: "Hero Splendor", service: "Engine Tuning & Diagnostics", status: "WAITING" },
+            { id: 104, time: "1:00 PM", name: "Karthik", vehicle: "Hero Splendor", service: "Front Suspension Repair", status: "IN_PROGRESS" },
+            { id: 105, time: "2:30 PM", name: "Manas", vehicle: "Hero Xtreme", service: "Tire Replacement (Rear)", status: "BOOKED" },
+        ];
+        
+        // Maps status codes to display names and CSS classes
+        const statusMap = {
+            'BOOKED': { label: 'Booked', class: 'status-booked' },
+            'IN_PROGRESS': { label: 'In Progress', class: 'status-in-progress' },
+            'WAITING': { label: 'Waiting on Parts', class: 'status-waiting' },
+            'READY': { label: 'Ready for Pickup', class: 'status-ready' }
+        };
+
+        function renderAppointment(app) {
+            const statusInfo = statusMap[app.status];
+            
+            const li = document.createElement('li');
+            li.className = 'appointment-item';
+            li.setAttribute('data-id', app.id);
+            
+            li.innerHTML = `
+                <div class="app-details">
+                    <span class="app-name">#${app.id} - ${app.name} (${app.vehicle})</span>
+                    <span class="app-time">${app.time} | Service: ${app.service}</span>
+                </div>
+                <div class="app-actions">
+                    <span class="status-tag ${statusInfo.class}">${statusInfo.label}</span>
+                    <button class="action-button view-details">Details</button>
+                    <button class="action-button update-status" data-status="${app.status}">Update</button>
+                </div>
+            `;
+            
+            
+            li.querySelector('.update-status').addEventListener('click', (e) => {
+                e.stopPropagation();
+                handleStatusUpdate(app.id, app.name);
+            });
+            
+            return li;
+        }
+
+        function renderAppointmentList() {
+            const listContainer = document.getElementById('appointmentList');
+            listContainer.innerHTML = ''; 
+            
+            appointments.forEach(app => {
+                listContainer.appendChild(renderAppointment(app));
+            });
+        }
+
+        function handleStatusUpdate(id, name) {
+            
+            console.log(`Attempting to update status for Appointment #${id} (${name}).`);
+            
+            
+            const message = `Status update initiated for Appointment #${id} (${name}).\nIn a real app, this would open a modal to change the status (Booked -> In Progress -> Ready).`;
+            displayMessageBox("Status Update", message);
+        }
+
+        function displayMessageBox(title, message) {
+            
+            const existingBox = document.getElementById('messageBox');
+            if (existingBox) existingBox.remove();
+
+            const modal = document.createElement('div');
+            modal.id = 'messageBox';
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0, 0, 0, 0.7); display: flex; justify-content: center;
+                align-items: center; z-index: 100;
+            `;
+
+            const box = document.createElement('div');
+            box.className = 'card';
+            box.style.cssText = `
+                max-width: 400px; padding: 25px; text-align: center;
+                transform: translateY(0); /* Override card hover effect */
+                background: var(--bg-soft);
+                border: 2px solid var(--accent);
+            `;
+            
+            box.innerHTML = `
+                <h3 class="card-title" style="margin-bottom: 15px; color: var(--accent);">${title}</h3>
+                <p style="margin-bottom: 25px; white-space: pre-wrap; text-align: left;">${message}</p>
+                <button id="closeButton" class="nav-link primary" style="background: var(--success); font-weight: 600;">Close</button>
+            `;
+
+            modal.appendChild(box);
+            document.body.appendChild(modal);
+
+            document.getElementById('closeButton').addEventListener('click', () => {
+                modal.remove();
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderAppointmentList();
+            
+            
+            document.getElementById('refreshButton').addEventListener('click', () => {
+                displayMessageBox("Data Refresh", "The data has been simulated to refresh. In a live system, this would fetch the latest bookings.");
+            });
+        });
+    </script>
+</body>
+</html>
