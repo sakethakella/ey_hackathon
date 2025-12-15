@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MotoVerse | Analyst Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    </head>
+<body>
+    
+    <header class="navbar dashboard-nav">
+        <div class="logo">MotoVerse</div>
+        <nav>
+            <ul>
+                <li><a href="analyst_view.html" class="active-link">Fleet Dashboard</a></li>
+                <li><a href="#reports">AI Reports</a></li>
+                <li><a href="#asset">Asset Management</a></li>
+                <li><a href="index.html">Log Out</a></li>
+            </ul>
+        </nav>
+        <div class="user-profile">
+            <i class="fas fa-chart-line"></i> <span>Analyst: [Manager Name]</span>
+        </div>
+    </header>
+
+    <main class="analyst-dashboard">
+        
+        <header class="dashboard-header">
+            <h1>Fleet Performance Overview</h1>
+            <p>Analyzing **125** Active Assets | Last Data Sync: 2 minutes ago</p>
+        </header>
+
+        <section class="kpi-grid">
+            <div class="kpi-card">
+                <i class="fas fa-battery-three-quarters"></i>
+                <h4>Predicted Downtime Reduction</h4>
+                <p class="kpi-value">32%</p>
+                <p class="kpi-trend">vs. last quarter</p>
+            </div>
+            
+            <div class="kpi-card">
+                <i class="fas fa-rupee-sign"></i>
+                <h4>Projected Maintenance Savings</h4>
+                <p class="kpi-value">₹ 1.4 Lakh</p>
+                <p class="kpi-trend">in next 6 months</p>
+            </div>
+
+            <div class="kpi-card">
+                <i class="fas fa-check-double"></i>
+                <h4>Service Compliance Rate</h4>
+                <p class="kpi-value high-value">98.5%</p>
+                <p class="kpi-trend">AI-scheduled services completed</p>
+            </div>
+        </section>
+
+        <section class="data-visualization-charts">
+            <h2>Component Wear & Failure Probability</h2>
+            <div class="chart-container-large">
+                <p class="chart-placeholder">
+                    
+                </p>
+            </div>
+        </section>
+
+        <div class="two-column-layout">
+            <section class="action-insights">
+                <h2>Critical AI Insights (Top 5 Vehicles)</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Asset ID</th>
+                            <th>Component</th>
+                            <th>Prediction Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>MH-01-AB-1234</td>
+                            <td>Brake Fluid</td>
+                            <td>2026-01-20</td>
+                            <td><a href="#" class="action-link critical-action">Schedule NOW</a></td>
+                        </tr>
+                         <tr>
+                            <td>DL-05-CD-5678</td>
+                            <td>Tire Tread (L)</td>
+                            <td>2026-02-15</td>
+                            <td><a href="#" class="action-link low-action">Monitor Closely</a></td>
+                        </tr>
+                        </tbody>
+                </table>
+            </section>
+            
+            <section class="utilization-metrics">
+                <h2>Fleet Utilization & Mileage</h2>
+                <div class="data-point">
+                    <h4>Average Daily Mileage</h4>
+                    <p class="value-large">185 KM</p>
+                </div>
+                <div class="data-point">
+                    <h4>Vehicles Flagged for Over-Utilization</h4>
+                    <p class="value-large warning-value">12</p>
+                </div>
+                <div class="data-point">
+                    <h4>Most Reliable Asset Class</h4>
+                    <p class="value-large">Hero [Model Name]</p>
+                </div>
+            </section>
+        </div>
+        
+    </main>
+
+    <footer>
+        <p>&copy; 2025 MotoVerse AI. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

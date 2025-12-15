@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MotoVerse | Rider Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    
+    <header class="navbar dashboard-nav">
+        <div class="logo">MotoVerse</div>
+        <nav>
+            <ul>
+                <li><a href="rider_view.html" class="active-link">Dashboard</a></li>
+                <li><a href="#history">Service History</a></li>
+                <li><a href="#docs">Documents</a></li>
+                <li><a href="index.html">Log Out</a></li>
+            </ul>
+        </nav>
+        <div class="user-profile">
+            <i class="fas fa-user-circle"></i> <span>Hello, [Rider Name]</span>
+        </div>
+    </header>
+
+    <main class="rider-dashboard">
+        
+        <header class="dashboard-header">
+            <h1>My Vehicle Dashboard</h1>
+            <p>Welcome back, analyze the health of your **[Bike/Car Model]** | Registration: [REG-NUM]</p>
+        </header>
+
+        <section class="status-overview-grid">
+            <div class="status-card health-status">
+                <i class="fas fa-heartbeat"></i>
+                <h2>Overall Health</h2>
+                <p class="status-value high-priority">Excellent (98%)</p>
+                <p class="subtext">AI-verified health score.</p>
+            </div>
+            
+            <div class="status-card service-due">
+                <i class="fas fa-calendar-check"></i>
+                <h2>Next Service</h2>
+                <p class="status-value mid-priority">Autonomous Schedule Confirmed</p>
+                <p class="subtext">Date: 15 / Mar / 2026 | Location: Hero Service Center, Mumbai</p>
+            </div>
+
+            <div class="status-card predicted-issue">
+                <i class="fas fa-cogs"></i>
+                <h2>Predicted Alert</h2>
+                <p class="status-value low-priority">Brake Pad Replacement (Front)</p>
+                <p class="subtext">Expected in 45 days or 1,200 km.</p>
+            </div>
+        </section>
+
+        <section class="diagnostics-section">
+            <h2>Live Vehicle Diagnostics</h2>
+            <div class="diagnostics-grid">
+                <div class="data-point">
+                    <i class="fas fa-oil-can"></i>
+                    <h4>Engine Oil Life</h4>
+                    <div class="progress-bar-container"><div class="progress-bar" style="width: 80%;"></div></div>
+                    <p>80% Remaining | Next check in 30 days</p>
+                </div>
+                
+                <div class="data-point">
+                    <i class="fas fa-battery-half"></i>
+                    <h4>Battery Voltage</h4>
+                    <p class="value-large">12.6V</p>
+                    <p>Stable performance. Last stress test: OK</p>
+                </div>
+                
+                <div class="data-point">
+                    <i class="fas fa-tire"></i>
+                    <h4>Tyre Pressure Sensor (R)</h4>
+                    <p class="value-large">32 PSI</p>
+                    <p>Within ideal range.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="alerts-scheduling">
+            <h2>Autonomous Service Management</h2>
+            <div class="alerts-container">
+                <div class="alert-box critical">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div>
+                        <h4>Urgent: Suspension Anomaly Detected</h4>
+                        <p>The AI has detected an increasing vibration pattern in the front suspension assembly. **Autonomous service request raised.**</p>
+                        <a href="#" class="btn-secondary">View Schedule Details</a>
+                    </div>
+                </div>
+                
+                <div class="alert-box info">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <h4>Maintenance Tip: Fuel Quality</h4>
+                        <p>Based on recent engine data, consider switching to a higher-octane fuel for optimal long-term component health.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+    </main>
+
+    <footer>
+        <p>&copy; 2025 MotoVerse. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
