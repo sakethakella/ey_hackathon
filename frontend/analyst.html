@@ -13,14 +13,14 @@
         <div class="logo">MotoVerse</div>
         <nav>
             <ul>
-                <li><a href="analyst_view.html" class="active-link">Fleet Dashboard</a></li>
-                <li><a href="#reports">AI Reports</a></li>
-                <li><a href="#asset">Asset Management</a></li>
+                <li><a href="analyst.html" class="active-link">Fleet Dashboard</a></li>
+                <li><a href="#charts">AI Reports</a></li>
+                <li><a href="#assets">Asset Management</a></li>
                 <li><a href="index.html">Log Out</a></li>
             </ul>
         </nav>
         <div class="user-profile">
-            <i class="fas fa-chart-line"></i> <span>Analyst: [Manager Name]</span>
+            <i class="fas fa-chart-line"></i> <span>Analyst: Rajesh</span>
         </div>
     </header>
 
@@ -28,7 +28,7 @@
         
         <header class="dashboard-header">
             <h1>Fleet Performance Overview</h1>
-            <p>Analyzing **125** Active Assets | Last Data Sync: 2 minutes ago</p>
+            <p>Analyzing 125 Active Assets | Last Data Sync: 2 minutes ago</p>
         </header>
 
         <section class="kpi-grid">
@@ -54,7 +54,7 @@
             </div>
         </section>
 
-        <section class="data-visualization-charts">
+        <section id = "charts" class="data-visualization-charts">
             <h2>Component Wear & Failure Probability</h2>
             <div class="chart-container-large">
                 <p class="chart-placeholder">
@@ -88,11 +88,32 @@
                             <td>2026-02-15</td>
                             <td><a href="#" class="action-link low-action">Monitor Closely</a></td>
                         </tr>
+                        <tr>
+    <td>BIKE_003</td>
+    <td>Engine Mount/Bearing</td>
+    <td>2025-12-28</td>
+    <td><a href="#" class="action-link critical-action">Immediate Inspection</a></td>
+</tr>
+
+<tr>
+    <td>BIKE_004</td>
+    <td>Coolant System</td>
+    <td>2026-01-05</td>
+    <td><a href="#" class="action-link mid-action">Schedule Flush</a></td>
+</tr>
+
+<tr>
+    <td>BIKE_005</td>
+    <td>Battery/Alternator</td>
+    <td>2026-01-12</td>
+    <td><a href="#" class="action-link low-action">Monitor Voltage</a></td>
+</tr>
+                    
                         </tbody>
                 </table>
             </section>
             
-            <section class="utilization-metrics">
+            <section id = "assets" class="utilization-metrics">
                 <h2>Fleet Utilization & Mileage</h2>
                 <div class="data-point">
                     <h4>Average Daily Mileage</h4>
@@ -104,7 +125,7 @@
                 </div>
                 <div class="data-point">
                     <h4>Most Reliable Asset Class</h4>
-                    <p class="value-large">Hero [Model Name]</p>
+                    <p class="value-large">Hero Splendor</p>
                 </div>
             </section>
         </div>
@@ -112,7 +133,7 @@
     </main>
 
     <footer>
-        <p>&copy; 2025 MotoVerse AI. All rights reserved.</p>
+        <p>&copy; 2025 MotoVerse. All rights reserved.</p>
     </footer>
 
 </body>

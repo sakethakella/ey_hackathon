@@ -13,14 +13,14 @@
         <div class="logo">MotoVerse</div>
         <nav>
             <ul>
-                <li><a href="rider_view.html" class="active-link">Dashboard</a></li>
+                <li><a href="rider.html" class="active-link">Dashboard</a></li>
                 <li><a href="#history">Service History</a></li>
                 <li><a href="#docs">Documents</a></li>
                 <li><a href="index.html">Log Out</a></li>
             </ul>
         </nav>
         <div class="user-profile">
-            <i class="fas fa-user-circle"></i> <span>Hello, [Rider Name]</span>
+            <i class="fas fa-user-circle"></i> <span>Hello, Suresh</span>
         </div>
     </header>
 
@@ -28,57 +28,65 @@
         
         <header class="dashboard-header">
             <h1>My Vehicle Dashboard</h1>
-            <p>Welcome back, analyze the health of your **[Bike/Car Model]** | Registration: [REG-NUM]</p>
+            <p>Welcome back, analyze the health of your Hero Splendor | Registration: *****77</p>
         </header>
 
-        <section class="status-overview-grid">
-            <div class="status-card health-status">
-                <i class="fas fa-heartbeat"></i>
-                <h2>Overall Health</h2>
-                <p class="status-value high-priority">Excellent (98%)</p>
-                <p class="subtext">AI-verified health score.</p>
-            </div>
-            
-            <div class="status-card service-due">
-                <i class="fas fa-calendar-check"></i>
-                <h2>Next Service</h2>
-                <p class="status-value mid-priority">Autonomous Schedule Confirmed</p>
-                <p class="subtext">Date: 15 / Mar / 2026 | Location: Hero Service Center, Mumbai</p>
-            </div>
+        <section class="live-telemetry">
+    <div class="telemetry-header">
+        <h2>Real-Time System Diagnostics</h2>
+        <span class="pulse-indicator">● LIVE DATA STREAMING</span>
+    </div>
 
-            <div class="status-card predicted-issue">
-                <i class="fas fa-cogs"></i>
-                <h2>Predicted Alert</h2>
-                <p class="status-value low-priority">Brake Pad Replacement (Front)</p>
-                <p class="subtext">Expected in 45 days or 1,200 km.</p>
+    <div class="telemetry-container">
+        <div class="telemetry-group">
+            <h3><i class="fas fa-engine"></i> Powertrain</h3>
+            <div class="data-row">
+                <span>Engine RPM</span>
+                <span class="value" id="val-rpm">1188.1</span>
             </div>
-        </section>
+            <div class="data-row">
+                <span>Engine Temp</span>
+                <span class="value" id="val-eng-temp">31.2°C</span>
+            </div>
+            <div class="data-row">
+                <span>Coolant Temp</span>
+                <span class="value" id="val-coolant">30.3°C</span>
+            </div>
+            <div class="data-row">
+                <span>Fuel Rate</span>
+                <span class="value" id="val-fuel">2.17 L/h</span>
+            </div>
+        </div>
 
-        <section class="diagnostics-section">
-            <h2>Live Vehicle Diagnostics</h2>
-            <div class="diagnostics-grid">
-                <div class="data-point">
-                    <i class="fas fa-oil-can"></i>
-                    <h4>Engine Oil Life</h4>
-                    <div class="progress-bar-container"><div class="progress-bar" style="width: 80%;"></div></div>
-                    <p>80% Remaining | Next check in 30 days</p>
-                </div>
-                
-                <div class="data-point">
-                    <i class="fas fa-battery-half"></i>
-                    <h4>Battery Voltage</h4>
-                    <p class="value-large">12.6V</p>
-                    <p>Stable performance. Last stress test: OK</p>
-                </div>
-                
-                <div class="data-point">
-                    <i class="fas fa-tire"></i>
-                    <h4>Tyre Pressure Sensor (R)</h4>
-                    <p class="value-large">32 PSI</p>
-                    <p>Within ideal range.</p>
-                </div>
+        <div class="telemetry-group">
+            <h3><i class="fas fa-motorcycle"></i> Chassis & Brakes</h3>
+            <div class="data-row">
+                <span>Vibration Index</span>
+                <span class="value warning-text" id="val-vibration">0.283</span>
             </div>
-        </section>
+            <div class="data-row">
+                <span>Brake Temp</span>
+                <span class="value" id="val-brake">30.9°C</span>
+            </div>
+            <div class="data-row">
+                <span>Speed</span>
+                <span class="value" id="val-speed">19.05 km/h</span>
+            </div>
+        </div>
+
+        <div class="telemetry-group">
+            <h3><i class="fas fa-bolt"></i> Electrical & Tyres</h3>
+            <div class="data-row">
+                <span>Battery Voltage</span>
+                <span class="value" id="val-battery">12.69 V</span>
+            </div>
+            <div class="data-row">
+                <span>Tyre Pressure (Avg)</span>
+                <span class="value" id="val-tyre">32.1 PSI</span>
+            </div>
+        </div>
+    </div>
+</section>
 
         <section class="alerts-scheduling">
             <h2>Autonomous Service Management</h2>
@@ -87,8 +95,8 @@
                     <i class="fas fa-exclamation-triangle"></i>
                     <div>
                         <h4>Urgent: Suspension Anomaly Detected</h4>
-                        <p>The AI has detected an increasing vibration pattern in the front suspension assembly. **Autonomous service request raised.**</p>
-                        <a href="#" class="btn-secondary">View Schedule Details</a>
+                        <p>The AI has detected an increasing vibration pattern in the front suspension assembly. Autonomous service request raised.</p>
+                        <a href="#scheduling" class="btn-secondary">View Schedule Details</a>
                     </div>
                 </div>
                 
@@ -101,7 +109,93 @@
                 </div>
             </div>
         </section>
+        <section id="history" class="dashboard-section">
+    <h2>Service History & AI Logs</h2>
+    <div class="timeline">
+        <div class="timeline-item">
+            <div class="timeline-date">Oct 12, 2025</div>
+            <div class="timeline-content">
+                <h3>Major Service: Engine & Transmission</h3>
+                <p><strong>Trigger:</strong> AI predicted 15% efficiency drop in fuel injectors.</p>
+                <p><strong>Workshop:</strong> Hero Authorized, South Delhi</p>
+                <span class="status-tag verified">Verified Authentic</span>
+            </div>
+        </div>
         
+        <div class="timeline-item">
+            <div class="timeline-date">June 05, 2025</div>
+            <div class="timeline-content">
+                <h3>Minor Service: Brake Pad Replacement</h3>
+                <p><strong>Trigger:</strong> Telemetry detected vibration anomaly.</p>
+                <p><strong>Workshop:</strong> Hero Authorised, South Delhi</p>
+                <span class="status-tag verified">Verified Authentic</span>
+            </div>
+        </div>
+    </div>
+</section>
+<section id="docs" class="dashboard-section">
+    <h2>Digital Document Locker</h2>
+    <div class="docs-grid">
+        <div class="doc-card">
+            <i class="fas fa-file-contract"></i>
+            <h4>Insurance Policy</h4>
+            <p>Expires: 20 Dec 2026</p>
+            <a href="#" class="btn-text">View / Download</a>
+        </div>
+        <div class="doc-card">
+            <i class="fas fa-id-card"></i>
+            <h4>Registration Certificate (RC)</h4>
+            <p>Status: Verified</p>
+            <a href="#" class="btn-text">View / Download</a>
+        </div>
+        <div class="doc-card warning-border">
+            <i class="fas fa-smog"></i>
+            <h4>PUC Certificate</h4>
+            <p class="critical-value">Expired 2 days ago</p>
+            <a href="#" class="btn-primary-small">Upload New</a>
+        </div>
+    </div>
+</section>
+<section id="scheduling" class="rider-dashboard">
+    <h2>Autonomous Service Scheduling</h2>
+    <div class="scheduling-container">
+        <div class="ai-booking-card">
+            <div class="ai-header">
+                <i class="fas fa-robot"></i>
+                <span>Agentic AI Recommendation</span>
+            </div>
+            <div class="booking-details">
+                <h3>Next Optimal Service Window</h3>
+                <p class="prediction-logic">Based on your current driving patterns (Avg 45km/day) and engine thermal data.</p>
+                
+                <div class="appointment-box">
+                    <div class="date-time">
+                        <p><i class="fas fa-calendar-day"></i> Tuesday, Dec 23, 2025</p>
+                        <p><i class="fas fa-clock"></i> 10:00 AM</p>
+                    </div>
+                    <div class="location">
+                        <p><i class="fas fa-map-marker-alt"></i> Hero Service Center, Okhla Phase III</p>
+                    </div>
+                </div>
+
+                <div class="booking-actions">
+                    <button class="btn-primary">Confirm Appointment</button>
+                    <button class="btn-secondary">Reschedule</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="scheduling-steps">
+            <h3>Booking Progress</h3>
+            <ul class="step-list">
+                <li class="completed"><i class="fas fa-check-circle"></i> AI Detection: Increased Vibration Detected</li>
+                <li class="completed"><i class="fas fa-check-circle"></i> Inventory Check: Parts Reserved at Workshop</li>
+                <li class="active"><i class="fas fa-spinner fa-spin"></i> Awaiting Rider Confirmation</li>
+                <li><i class="far fa-circle"></i> Autonomous Logistics: RSA Notified (Optional)</li>
+            </ul>
+        </div>
+    </div>
+</section>
     </main>
 
     <footer>
