@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MotoVerse | Login or Sign Up</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="login-body">
+    
+    <div class="login-container">
+        <a href="index.html" class="login-logo">MotoVerse</a>
+        
+        <div class="auth-switch">
+            <button id="login-tab" class="auth-tab active-tab">Log In</button>
+            <button id="signup-tab" class="auth-tab">Sign Up</button>
+        </div>
+
+        <form id="login-form" class="auth-form active-form">
+            <h2>Access Your Autonomous Dashboard</h2>
+            <div class="input-group">
+                <i class="fas fa-user"></i>
+                <input type="email" placeholder="Email or Username" required>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" placeholder="Password" required>
+            </div>
+            <p class="forgot-password"><a href="#">Forgot Password?</a></p>
+            
+            <button type="submit" class="btn-primary login-btn">Log In</button>
+        </form>
+
+        <form id="signup-form" class="auth-form">
+            <h2>Join MotoVerse</h2>
+            <div class="input-group">
+                <i class="fas fa-envelope"></i>
+                <input type="email" placeholder="Email Address" required>
+            </div>
+             <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" placeholder="Create Password" required>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-truck-moving"></i>
+                <select id="user-type" required>
+                    <option value="">I am a...</option>
+                    <option value="rider">Rider/Vehicle Owner</option>
+                    <option value="analyst">Fleet Analyst/Manager</option>
+                    <option value="workshop">Workshop/Service Center</option>
+                </select>
+            </div>
+            <p class="terms">By clicking Sign Up, you agree to our <a href="#">Terms and Conditions</a>.</p>
+            <button type="submit" class="btn-secondary signup-btn">Sign Up Now</button>
+        </form>
+
+    </div>
+    
+    <script src="auth_scripts.js"></script> 
+</body>
+</html>

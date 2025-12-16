@@ -739,6 +739,136 @@ footer {
 .contact-info a:hover {
     color: var(--color-text-light);
 }
+
+/* --- LOGIN/SIGN UP PAGE STYLES (login.html) --- */
+
+.login-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: var(--color-dark-bg);
+    /* Optional: Add a subtle background image for a tech feel */
+    background-image: url('data:image/svg+xml;utf8,<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="%231a2036" stroke-width="1"></path></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)" /></svg>');
+}
+
+.login-container {
+    background-color: var(--color-light-bg);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    border-top: 5px solid var(--color-primary-accent);
+}
+
+.login-logo {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: var(--color-primary-accent);
+    display: block;
+    margin-bottom: 30px;
+}
+
+/* Tab Switching */
+.auth-switch {
+    display: flex;
+    margin-bottom: 25px;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #2a3048; /* Slightly darker than container */
+}
+
+.auth-tab {
+    flex: 1;
+    padding: 12px 0;
+    border: none;
+    background: transparent;
+    color: var(--color-text-fade);
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.auth-tab.active-tab {
+    background-color: var(--color-primary-accent);
+    color: var(--color-dark-bg);
+}
+
+/* Forms */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.auth-form h2 {
+    color: var(--color-text-light);
+    font-size: 1.5em;
+    margin-bottom: 20px;
+}
+
+.auth-form:not(.active-form) {
+    display: none; /* Hide inactive form */
+}
+
+/* Input Styles */
+.input-group {
+    display: flex;
+    align-items: center;
+    background-color: var(--color-dark-bg);
+    border-radius: 5px;
+    padding: 10px;
+    border: 1px solid var(--color-dark-bg);
+    transition: border-color 0.3s;
+}
+
+.input-group:focus-within {
+    border-color: var(--color-primary-accent);
+}
+
+.input-group i {
+    color: var(--color-text-fade);
+    margin-right: 10px;
+}
+
+.input-group input, .input-group select {
+    background: transparent;
+    border: none;
+    color: var(--color-text-light);
+    width: 100%;
+    padding: 5px 0;
+    outline: none;
+    font-size: 1em;
+}
+
+.input-group select option {
+    background-color: var(--color-dark-bg); /* Style for options in dark theme */
+    color: var(--color-text-light);
+}
+
+.forgot-password, .terms {
+    font-size: 0.9em;
+    color: var(--color-text-fade);
+    text-align: right;
+}
+
+.terms {
+    text-align: center;
+}
+
+.forgot-password a, .terms a {
+    color: var(--color-primary-accent);
+}
+
+.login-btn, .signup-btn {
+    margin-top: 15px;
+    padding: 12px;
+    font-size: 1.1em;
+    cursor: pointer;
+}
+
 @media (max-width: 768px) {
     .navbar {
         flex-direction: column;
